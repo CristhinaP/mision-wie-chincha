@@ -1,6 +1,178 @@
-<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Misión matemática · Misión WIE Chincha</title><style>*{box-sizing:border-box}body{margin:0;background:#090f25;color:#f4f5ff;font:16px system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:28px}a{color:#bba5ff}header{display:flex;justify-content:space-between;gap:15px;color:#a6b5d6;font-size:13px;letter-spacing:1px}h1{font-size:clamp(32px,5vw,54px);letter-spacing:-2px;margin-bottom:10px}h1 span{color:#baa2ff}p{color:#b5c2df;line-height:1.6}.grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-top:24px}.card{background:#131e39;border:1px solid #304064;border-radius:22px;padding:26px}.stats{display:flex;gap:25px;flex-wrap:wrap;color:#ffe19a;font-weight:700}.big{font-size:clamp(48px,7vw,80px);text-align:center;margin:28px 0;font-weight:800}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}button,select,input{font:inherit}button{background:#263658;border:1px solid #50648e;color:white;border-radius:12px;padding:14px;cursor:pointer}button:hover{filter:brightness(1.2)}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffdf75;outline-offset:3px}.primary{background:#b69aff;color:#171126;font-weight:800;border:0}label{display:block;margin:20px 0 8px}select{background:#233455;color:white;padding:10px;width:100%;border:1px solid #50648e;border-radius:9px}input[type=color]{width:100%;height:40px;background:none;border:0}input[type=range]{width:100%;accent-color:#b69aff}.feedback{min-height:65px;padding:14px 0;color:#b8f4d9;font-weight:700;line-height:1.5}code{display:block;white-space:pre-wrap;background:#090f25;color:#92e7cd;border-radius:10px;padding:14px;font-size:12px;line-height:1.8}svg{display:block;width:100%;height:auto}svg text{font-family:system-ui;font-size:16px;fill:#dce8ff}.row{display:flex;gap:12px;flex-wrap:wrap}.badge{font-size:12px;color:#bba5ff;letter-spacing:2px}footer{color:#8c9cbe;margin-top:24px;font-size:13px}button.active{background:#236257;border-color:#7fffd2}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:34px 0}.tile{display:block;text-decoration:none;color:inherit;transition:transform .2s}.tile:hover{transform:translateY(-5px)}.icon{font-size:52px}.tile h2{font-size:24px} @media(max-width:800px){.grid,.tiles{grid-template-columns:1fr}main{padding:18px}.card{padding:20px}}</style><main><header><b>✦ MISIÓN WIE CHINCHA</b><a href="../index.html">← Los tres proyectos</a></header><h1>Misión <span>matemática.</span></h1><p>Resuelve la operación y activa el portal correcto. ¡Cada respuesta es una nueva oportunidad para aprender!</p><div class="grid"><section class="card"><div class="stats"><span id="progress">Reto 1 / 8</span><span id="points">0 puntos</span></div><div class="big" id="question"></div><div class="choices" id="choices"></div><div class="feedback" id="feedback" role="status" aria-live="polite"></div><div class="row"><button class="primary" id="next" disabled>Siguiente reto →</button><button id="reset">Reiniciar</button></div></section><aside class="card"><span class="badge">MODO CREADOR</span><h2>Diseña tus retos</h2><label for="level">Dificultad</label><select id="level"><option value="10">Inicial · hasta 10</option><option value="20" selected>Explorador · hasta 20</option><option value="50">Experto · hasta 50</option></select><label for="operation">Operaciones</label><select id="operation"><option value="mix">Suma y resta</option><option value="add">Solo suma</option><option value="sub">Solo resta</option><option value="mul">Multiplicación · tablas del 1 al 10</option></select><label for="accent">Color de los portales</label><input id="accent" type="color" value="#263658"><p>Cambiar las reglas reinicia la partida. No hay límite de tiempo: piensa, prueba y aprende.</p><code id="code"></code></aside></div><footer>WIE UTP · Ingeniería de Sistemas e Informática · Funciona sin internet</footer></main><script>// CAMBIA AQUÍ: reglas iniciales de tu videojuego.
-const CONFIG={maximo:20,operacion:'mix',retos:8,puntos:10,color:'#263658'};
-const $=id=>document.getElementById(id);let round=1,points=0,answer=0,locked=false,done=false;const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-function showCode(){$('code').textContent=`// CAMBIA AQUÍ\nmaximo = ${CONFIG.maximo};\noperacion = "${CONFIG.operacion}";\nretos = ${CONFIG.retos};\npuntos = ${CONFIG.puntos};`;}
-function question(){locked=false;done=false;$('next').disabled=true;$('next').textContent='Siguiente reto →';$('feedback').textContent='';$('progress').textContent=`Reto ${round} / ${CONFIG.retos}`;$('points').textContent=points+' puntos';let op=CONFIG.operacion==='mix'?(Math.random()<.5?'add':'sub'):CONFIG.operacion;let a=rand(1,CONFIG.maximo),b=rand(1,CONFIG.maximo);if(op==='mul'){a=rand(1,10);b=rand(1,10);}if(op==='sub'&&b>a)[a,b]=[b,a];answer=op==='add'?a+b:op==='sub'?a-b:a*b;$('question').textContent=`${a} ${op==='add'?'+':op==='sub'?'−':'×'} ${b} = ?`;let values=new Set([answer]);while(values.size<4)values.add(Math.max(0,answer+rand(-10,10)));$('choices').replaceChildren();for(const value of [...values].sort(()=>Math.random()-.5)){let btn=document.createElement('button');btn.textContent=value;btn.style.background=CONFIG.color;btn.onclick=()=>{if(locked)return;locked=true;document.querySelectorAll('#choices button').forEach(b=>b.disabled=true);if(value===answer){points+=CONFIG.puntos;btn.style.background='#217257';$('feedback').textContent='¡Correcto! Portal activado. +'+CONFIG.puntos+' puntos.';}else{btn.style.background='#8e3550';$('feedback').textContent=`Buen intento. ${a} ${op==='add'?'+':op==='sub'?'−':'×'} ${b} = ${answer}. ¡Vamos con el siguiente!`;}$('points').textContent=points+' puntos';$('next').disabled=false;if(round===CONFIG.retos)$('next').textContent='Ver resultado →';};$('choices').append(btn);}showCode();}
-function reset(){round=1;points=0;question();}$('next').onclick=()=>{if(done){reset();return;}if(round===CONFIG.retos){done=true;$('question').textContent='¡Misión cumplida!';$('question').style.fontSize='44px';$('choices').replaceChildren();$('progress').textContent='Partida completada';$('feedback').textContent=`Conseguiste ${points} de ${CONFIG.retos*CONFIG.puntos} puntos. Cambia las reglas y prueba otra partida.`;$('next').textContent='Jugar otra vez →';}else{round++;question();}};$('reset').onclick=()=>{$('question').style.fontSize='';reset();};$('level').onchange=e=>{CONFIG.maximo=+e.target.value;reset();};$('operation').onchange=e=>{CONFIG.operacion=e.target.value;reset();};$('accent').oninput=e=>{CONFIG.color=e.target.value;document.querySelectorAll('#choices button').forEach(b=>b.style.background=CONFIG.color);};question();</script></html>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Misión Matemática | Misión WIE Chincha</title>
+
+    <!-- Archivo de estilos -->
+    <link rel="stylesheet" href="estilos.css">
+
+    <!-- Archivo de programación -->
+    <script src="juego.js" defer></script>
+</head>
+
+<body>
+
+    <main>
+
+        <!-- ENCABEZADO -->
+        <header>
+            <b>✦ MISIÓN WIE CHINCHA</b>
+
+            <a href="../index.html">
+                ← Los tres proyectos
+            </a>
+        </header>
+
+        <!-- TÍTULO -->
+        <h1>
+            Misión <span>matemática.</span>
+        </h1>
+
+        <p>
+            Resuelve la operación y activa el portal correcto.
+            ¡Cada respuesta es una nueva oportunidad para aprender!
+        </p>
+
+        <div class="grid">
+
+            <!-- PANEL PRINCIPAL DEL JUEGO -->
+            <section class="card">
+
+                <!-- ESTADÍSTICAS -->
+                <div class="stats">
+
+                    <span id="progress">
+                        Reto 1 / 8
+                    </span>
+
+                    <span id="points">
+                        0 puntos
+                    </span>
+
+                </div>
+
+                <!-- PREGUNTA MATEMÁTICA -->
+                <div class="big" id="question"></div>
+
+                <!-- OPCIONES DE RESPUESTA -->
+                <div class="choices" id="choices"></div>
+
+                <!-- MENSAJES DEL JUEGO -->
+                <div
+                    class="feedback"
+                    id="feedback"
+                    role="status"
+                    aria-live="polite">
+                </div>
+
+                <!-- BOTONES -->
+                <div class="row">
+
+                    <button
+                        class="primary"
+                        id="next"
+                        disabled>
+                        Siguiente reto →
+                    </button>
+
+                    <button id="reset">
+                        Reiniciar
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- PANEL DE CONFIGURACIÓN -->
+            <aside class="card">
+
+                <span class="badge">
+                    MODO CREADOR
+                </span>
+
+                <h2>Diseña tus retos</h2>
+
+                <!-- DIFICULTAD -->
+                <label for="level">
+                    Dificultad
+                </label>
+
+                <select id="level">
+
+                    <option value="10">
+                        Inicial · hasta 10
+                    </option>
+
+                    <option value="20" selected>
+                        Explorador · hasta 20
+                    </option>
+
+                    <option value="50">
+                        Experto · hasta 50
+                    </option>
+
+                </select>
+
+                <!-- TIPO DE OPERACIÓN -->
+                <label for="operation">
+                    Operaciones
+                </label>
+
+                <select id="operation">
+
+                    <option value="mix">
+                        Suma y resta
+                    </option>
+
+                    <option value="add">
+                        Solo suma
+                    </option>
+
+                    <option value="sub">
+                        Solo resta
+                    </option>
+
+                    <option value="mul">
+                        Multiplicación · tablas del 1 al 10
+                    </option>
+
+                </select>
+
+                <!-- PERSONALIZACIÓN -->
+                <label for="accent">
+                    Color de los portales
+                </label>
+
+                <input
+                    id="accent"
+                    type="color"
+                    value="#263658">
+
+                <p>
+                    Cambiar las reglas reinicia la partida.
+                    No hay límite de tiempo:
+                    piensa, prueba y aprende.
+                </p>
+
+                <!-- CÓDIGO DE CONFIGURACIÓN -->
+                <code id="code"></code>
+
+            </aside>
+
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            WIE UTP · Ingeniería de Sistemas e Informática ·
+            Funciona sin internet
+        </footer>
+
+    </main>
+
+</body>
+</html>
