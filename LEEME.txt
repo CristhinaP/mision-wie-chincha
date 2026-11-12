@@ -1,0 +1,31 @@
+MISIÓN WIE CHINCHA — WIE UTP
+
+INICIO
+Descomprime toda la carpeta y abre index.html con Chrome, Edge o Firefox.
+No necesita internet, instalación ni servidor. No abras los juegos dentro del ZIP.
+
+PROYECTOS
+01_Atrapa_Estrellas/index.html: habilidad, variables, movimiento y colisiones.
+02_Mision_Matematica/index.html: operaciones, números aleatorios, condiciones y puntos.
+03_Laboratorio_Circuitos/index.html: hipótesis, circuitos ideales, lógica AND/OR.
+
+PARA MODIFICAR
+Haz una copia del proyecto. Abre su index.html en un editor de texto o VS Code.
+Busca CAMBIA AQUÍ. Modifica una sola propiedad de CONFIG, guarda y recarga.
+Los paneles muestran el efecto de las variables, pero no guardan los cambios en el archivo.
+Al editar CONFIG actualiza también el valor inicial del control HTML correspondiente.
+No borres comillas, comas ni llaves. Si falla, vuelve a la copia original.
+
+RETOS PARA EL TALLER (2–3 estudiantes por equipo)
+Estrellas: cambiar velocidad de 6 a 9 y comparar; elegir personaje y dificultad.
+Matemática: cambiar puntos de 10 a 20 o retos de 8 a 5; probar otra operación.
+Circuitos: cambiar color; explicar por qué serie usa a && b y paralelo a || b.
+Rotar roles: quien modifica, quien prueba y quien explica.
+
+FERIA
+Turnos de 3–5 minutos. Cada visitante juega un reto, propone un cambio y observa el resultado.
+Mostrar código y juego juntos para conectar el proyecto con Sistemas e Informática.
+
+CIENCIA
+El circuito es una simulación lógica ideal, no un diseño para armar físicamente.
+No calcula resistencia, brillo físico, voltaje ni intensidad. No conectar a la red eléctrica.
